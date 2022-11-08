@@ -1,7 +1,7 @@
 #pragma once
-#include"Register.h"
-#include<iostream>
-#include<map>
+#include "Register.h"
+#include <iostream>
+#include <map>
 
 using namespace std;
 
@@ -48,10 +48,14 @@ public:
 		reg["x31"] = 0;
 	}
 
-	int getregistervalue(string name) {
+	int getregistervalue(string name)
+	{
 		return reg[name];
 	}
-
+	void setregistervalue(string name, int x)
+	{
+		reg[name] = x;
+	}
 
 	~Register()
 	{
