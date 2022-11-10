@@ -5,6 +5,7 @@
 #include <sstream>
 #include <algorithm>
 #include "Register.cpp"
+#include"Simulator.cpp"
 
 using namespace std;
 
@@ -45,7 +46,7 @@ string toBinary(int n)
 	return bNum;
 }
 
-void FigureOut(string currentline, int &pc) // we pass pc by reference since some functions will want to edit the pc counter
+vector<string> FigureOut(string currentline, int &pc) // we pass pc by reference since some functions will want to edit the pc counter
 {
 	if (currentline.find(':') != std::string::npos)
 	{
@@ -85,6 +86,7 @@ void FigureOut(string currentline, int &pc) // we pass pc by reference since som
 	{
 		cout << "no";
 	}
+	return sentence;
 }
 
 string validate(string &line)
@@ -103,6 +105,7 @@ string validate(string &line)
 int main()
 {
 	Register x;
+	Simulator sim;
 	x.setregistervalue("x0", 4);
 	string filename;
 	cout << "Enter the name of the file: ";
@@ -122,7 +125,7 @@ int main()
 	cin >> i;
 	while (i <= AssemCodeLines.size())
 	{
-		FigureOut(AssemCodeLines[i], i);
+		sim.Setline(FigureOut(AssemCodeLines[i], i));
 		i++;
 	}
 	cout << toBinary(-121);
