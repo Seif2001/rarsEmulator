@@ -5,7 +5,7 @@
 #include <sstream>
 #include <algorithm>
 #include "Register.cpp"
-#include"Simulator.cpp"
+#include "Simulator.cpp"
 
 using namespace std;
 
@@ -48,11 +48,12 @@ string toBinary(int n)
 
 vector<string> FigureOut(string currentline, int &pc) // we pass pc by reference since some functions will want to edit the pc counter
 {
+	vector<string> sentence;
 	if (currentline.find(':') != std::string::npos)
 	{
-		return; // if the sentence has a : then it doesnt have a function as per seif's handling
+		sentence.push_back(currentline);
+		return sentence; // if the sentence has a : then it doesnt have a function as per seif's handling
 	}
-	vector<string> sentence;
 	string word = "";
 	/*
 	The upcoming for loop just takes the line and splits it into pieces for example take addi x7, x3, x4 then we have
@@ -64,7 +65,10 @@ vector<string> FigureOut(string currentline, int &pc) // we pass pc by reference
 	{
 		if (x == ' ' || x == ',' || x == '(')
 		{
-			sentence.push_back(word);
+			if (word != "")
+			{
+				sentence.push_back(word);
+			}
 			word = "";
 		}
 		else
@@ -77,26 +81,18 @@ vector<string> FigureOut(string currentline, int &pc) // we pass pc by reference
 		}
 	}
 	sentence.push_back(word); // the first element is the function name
-	string function = sentence[0];
-	if (function == "lw")
-	{
-		// lw(sentence,&pc);
-	}
-	else
-	{
-		cout << "no";
-	}
 	return sentence;
 }
 
 string validate(string &line)
 {
+	// maybe we'll handle comments idk
 	string label = "";
 	int index = line.find(':');
 	if (index != string::npos)
 	{
 		label = line.substr(0, index + 1);
-		line = line.substr(index + 2, line.length() - 1);
+		line = line.substr(index + 1, line.length() - 1); // this puts a space after labels but its handled in figureout() just putting this comment incase later on some bug happens
 	}
 
 	return label;
@@ -104,9 +100,7 @@ string validate(string &line)
 
 int main()
 {
-	Register x;
 	Simulator sim;
-	x.setregistervalue("x0", 4);
 	string filename;
 	cout << "Enter the name of the file: ";
 	cin >> filename;
@@ -125,9 +119,22 @@ int main()
 	cin >> i;
 	while (i <= AssemCodeLines.size())
 	{
+
 		sim.Setline(FigureOut(AssemCodeLines[i], i));
+		cout << "Executing: " << AssemCodeLines[i] << endl;
+		/*
+		// dont know if we'll keep this but im just using it for now so it catches if the user
+		puts a string instead of an int in the file for example addi x3,x4,omar so we dont have to test every function
+		*/
+		try
+		{
+			sim.ChooseFunc(i);
+		}
+		catch (exception e)
+		{
+			cout << AssemCodeLines[i] << " Is not valid syntax. Ignoring that line." << endl;
+		}
 		i++;
 	}
-	cout << toBinary(-121);
 	return 0;
 }

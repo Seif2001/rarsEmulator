@@ -13,6 +13,7 @@ private:
 public:
 	Register()
 	{
+		// we need to handle the t0,s0,etc.
 		reg["x0"] = 0;
 		reg["x1"] = 0;
 		reg["x2"] = 0;
@@ -53,7 +54,12 @@ public:
 	}
 	void setregistervalue(string name, int x)
 	{
+		// we have to put the if "it is found" here
 		reg[name] = x;
+	}
+	void print()
+	{
+		// we'll print all the registers (that were changed) here
 	}
 
 	~Register()
