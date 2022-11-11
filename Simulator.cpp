@@ -35,6 +35,9 @@ public:
 		{
 			andi();
 		}
+		else if (currFunction == "sll" && line.size() == 4) {
+			sll();
+		}
 		else
 		{
 			cout << "That function doesnt exist, or you wrote it wrong!\n";
@@ -43,16 +46,37 @@ public:
 	}
 	void andd()
 	{
-		int result = allRegisters.getregistervalue(line[2]) & allRegisters.getregistervalue(line[3]);
-		allRegisters.setregistervalue(line[1], result);
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]) {
+			int result = allRegisters.getregistervalue(line[2]) & allRegisters.getregistervalue(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+		}
+		else {
+			//close program
+		}
 	}
 	void andi()
 	{
-		int result = allRegisters.getregistervalue(line[2]) & stoi(line[3]);
-		allRegisters.setregistervalue(line[1], result);
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]) {
+			int result = allRegisters.getregistervalue(line[2]) & stoi(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+		}
+		else {
+			//close program
+		}
+		
 	}
 	void auipc(int &pc)
 	{
+	}
+	void sll() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]) {
+			int result = allregisters.getregistervalue(line[2] << line[3]);
+			allregisters.setregistervalue(line[1], result);
+		}
+		else {
+			//close program
+		}
+		
 	}
 	~Simulator()
 	{
