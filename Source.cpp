@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "Register.cpp"
 #include "Simulator.cpp"
+#include "Memory.cpp"
 
 using namespace std;
 
@@ -100,7 +101,6 @@ string validate(string &line)
 
 int main()
 {
-	Simulator sim;
 	string filename;
 	cout << "Enter the name of the file: ";
 	cin >> filename;
@@ -114,10 +114,15 @@ int main()
 			AssemCodeLines.insert(AssemCodeLines.begin() + i, label);
 		}
 	}
+	Simulator sim(AssemCodeLines);
 	int i = 0;
 	cout << "Enter initial PC counter: ";
 	cin >> i;
-	while (i <= AssemCodeLines.size())
+	i = i / 4; 
+	/*pc counter is given in multiples of 4 and 
+	is incrimented by 4 each time so we just divide by 4 and now in the loop we can incriment by 1
+	but we need to multiply by 4 if we need to store pc address for example*/
+	while (i < AssemCodeLines.size() && i >= 0)
 	{
 
 		sim.Setline(FigureOut(AssemCodeLines[i], i));
