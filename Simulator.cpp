@@ -19,6 +19,67 @@ public:
 	{
 		this->rawCode = rawCode;
 	}
+	string twosComp(string x)
+	{
+		int i, carr = 1;
+		for (i = 0; i < x.size(); i++)
+		{
+			x[i] = x[i] == '0' ? '1' : '0';
+		}
+		for (i = x.size() - 1; i >= 0; i--)
+		{
+			if (x[i] == '1' && carr == 1)
+			{
+				x[i] = '0';
+			}
+			else if (x[i] == '0' && carr == 1)
+			{
+				x[i] = '1';
+				carr = 0;
+			}
+		}
+		return x;
+	}
+	int toInteger(string x)
+	{
+		int num = 0;
+		int k = 0;
+		string curr = "";
+		bool isNegative = false;
+		curr += x[0];
+		if (curr == "1")
+		{
+			isNegative = true;
+			x = twosComp(x);
+		}
+		for (int i = x.length() - 1; i >= 0; i--)
+		{
+			string curr = "";
+			curr += x[i];
+			if (i != 0)
+			{
+				num += pow(2, k++) * stoi(curr);
+			}
+		}
+		if (isNegative)
+		{
+			num *= -1;
+		}
+		return num;
+	}
+	string toBinary(int n)
+	{
+		string bNum = "";
+		for (int i = 31; i >= 0; i--)
+		{
+			int k = n >> i;
+			if (k & 1)
+				bNum.push_back('1');
+			else
+				bNum.push_back('0');
+		}
+		return bNum;
+	}
 
 	void Setline(vector<string> line)
 	{
@@ -40,9 +101,17 @@ public:
 		{
 			andi();
 		}
+		else if (currFunction == "sltu" && line.size() == 4)
+		{
+			sltu();
+		}
 		else if (currFunction == "sll" && line.size() == 4)
 		{
 			sll();
+		}
+		else if (currFunction == "sra" && line.size() == 4)
+		{
+			sra();
 		}
 		else if (currFunction == "slli" && line.size() == 4)
 		{
@@ -55,6 +124,10 @@ public:
 		else if (currFunction == "addi" && line.size() == 4)
 		{
 			addi();
+		}
+		else if (currFunction == "or" && line.size() == 4)
+		{
+			orr();
 		}
 		else
 		{
@@ -105,11 +178,60 @@ public:
 	void auipc(int &pc)
 	{
 	}
+	void orr()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int result = allRegisters.getregistervalue(line[2]) | allRegisters.getregistervalue(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+	void sltu()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int result = (unsigned)allRegisters.getregistervalue(line[2]) < (unsigned)allRegisters.getregistervalue(line[3]) ? 1 : 0;
+			allRegisters.setregistervalue(line[1], result);
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
 	void sll()
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
 			int result = allRegisters.getregistervalue(line[2]) << allRegisters.getregistervalue(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+	void sra()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int LHS = allRegisters.getregistervalue(line[2]);
+			int RHS = allRegisters.getregistervalue(line[3]);
+			int result = 0;
+			if (LHS < 0 && RHS > 0)
+			{
+				result = LHS >> RHS | ~(~0U >> RHS);
+			}
+			else
+			{
+				result = LHS >> RHS;
+			}
 			allRegisters.setregistervalue(line[1], result);
 		}
 		else
