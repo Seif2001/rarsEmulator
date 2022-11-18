@@ -120,11 +120,12 @@ int main()
 			AssemCodeLines.insert(AssemCodeLines.begin() + i, label);
 		}
 	}
-	Simulator sim(AssemCodeLines);
+
 	int i = 0;
 	cout << "Enter initial PC counter: ";
 	cin >> i;
 	i = i / 4;
+	Simulator sim(AssemCodeLines, i);
 	cout << AssemCodeLines.size();
 	/*pc counter is given in multiples of 4 and
 	is incrimented by 4 each time so we just divide by 4 and now in the loop we can incriment by 1
@@ -141,7 +142,7 @@ int main()
 		*/
 		try
 		{
-			sim.ChooseFunc(i);
+			sim.ChooseFunc();
 		}
 		catch (exception e)
 		{
@@ -149,5 +150,9 @@ int main()
 		}
 		i++;
 	}
+
+	//int pcc = sim.JumptoBranch("insideloop");
+
+	//cout << pcc;
 	return 0;
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <math.h>
 #include "Memory.cpp"
 #include "Register.cpp"
 
@@ -13,11 +14,14 @@ private:
 	Memory allMemory;
 	vector<string> rawCode;
 	vector<string> line;
+	int const initialpc;
+	int pc;
 
 public:
-	Simulator(vector<string> rawCode)
+	Simulator(vector<string> rawCode, int pc) : initialpc(pc)
 	{
 		this->rawCode = rawCode;
+		this->pc = pc;
 	}
 	string twosComp(string x)
 	{
@@ -81,11 +85,23 @@ public:
 		return bNum;
 	}
 
+	void JumptoBranch(string label) {
+		label = label + ":";
+		for (int i = 0; i < rawCode.size(); i++) {
+			if (rawCode[i] == label) {
+				i = i * 4;
+				pc += i + initialpc;
+				break;
+			}
+			
+		}
+	}
+
 	void Setline(vector<string> line)
 	{
 		this->line = line;
 	}
-	void ChooseFunc(int &pc)
+	void ChooseFunc()
 	{
 		string currFunction = line[0];
 		if (currFunction.find(":") != std::string::npos) // if we have a collon we skip since its just a label with nothing else
@@ -208,14 +224,75 @@ public:
 	void bge() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-			int result = allRegisters.getregistervalue(line[2]) & allRegisters.getregistervalue(line[3]);
-			allRegisters.setregistervalue(line[1], result);
+			int t1 = allRegisters.getregistervalue(line[1]);
+			int t2 = allRegisters.getregistervalue(line[2]);
+			string label = line[3];
+			if (t1 >= t2) {
+				JumptoBranch(label);
+			}
 		}
 		else
 		{
-			// close program
+			exit(0);
 		}
 	}
+
+	void bltu() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			
+			int t1 = abs(allRegisters.getregistervalue(line[1]));
+			int t2 = abs(allRegisters.getregistervalue(line[2]));
+			string label = line[3];
+			if (t1 < t2) {
+				JumptoBranch(label);
+			}
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void bgeu() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+
+			int t1 = abs(allRegisters.getregistervalue(line[1]));
+			int t2 = abs(allRegisters.getregistervalue(line[2]));
+			string label = line[3];
+			if (t1 >= t2) {
+				JumptoBranch(label);
+			}
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void xori() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+
+			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
+			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
+			string t3 = "";
+			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
+			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
+			for (int i = 0; i < t1.size(); i++) {
+				if (t1[i] == t2[i]) t3 += "0";
+				else t3 += "1";
+			}
+			int result = toInteger(t3);
+			allRegisters.setregistervalue(line[1],result);
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
 	void sll()
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
