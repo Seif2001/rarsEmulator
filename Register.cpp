@@ -1,14 +1,31 @@
 #pragma once
 #include <iostream>
 #include <map>
+#include<string>
 
 using namespace std;
+
+struct Comp
+{
+	bool operator()(const string& lhs, const string& rhs) const
+	{
+		string lhsF = lhs;
+		string rhsF = rhs;
+		lhsF.erase(lhsF.begin(), lhsF.begin() + 1);
+		int lhsInt = stoi(lhsF);
+		rhsF.erase(rhsF.begin(), rhsF.begin() + 1);
+		int rhsInt = stoi(rhsF);
+		return lhsInt < rhsInt;
+	}
+};
+
+
 
 class Register
 {
 
 private:
-	map<string, int> reg;
+	map<string, int, Comp> reg;
 
 public:
 	Register()

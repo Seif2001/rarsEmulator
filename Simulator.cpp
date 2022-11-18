@@ -17,11 +17,15 @@ private:
 	int const initialpc;
 	int pc;
 
+
 public:
 	Simulator(vector<string> rawCode, int pc) : initialpc(pc)
 	{
 		this->rawCode = rawCode;
 		this->pc = pc;
+	}
+	int getPc() {
+		return pc;
 	}
 	string twosComp(string x)
 	{
@@ -89,8 +93,8 @@ public:
 		label = label + ":";
 		for (int i = 0; i < rawCode.size(); i++) {
 			if (rawCode[i] == label) {
-				i = i * 4;
-				pc += i + initialpc;
+				//i = i * 4;
+				pc = i;
 				break;
 			}
 			
@@ -106,6 +110,7 @@ public:
 		string currFunction = line[0];
 		if (currFunction.find(":") != std::string::npos) // if we have a collon we skip since its just a label with nothing else
 		{
+			pc++;
 			return;
 		}
 
@@ -145,6 +150,9 @@ public:
 		{
 			orr();
 		}
+		else if (currFunction == "bne" && line.size() == 4) {
+			bne();
+		}
 		else
 		{
 			cout << "That function doesnt exist, or you wrote it wrong!\n";
@@ -152,12 +160,32 @@ public:
 		allRegisters.print();
 		allMemory.print();
 	}
+
+	void bne() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			if (allRegisters.getregistervalue(line[1]) != allRegisters.getregistervalue(line[2])) {
+				JumptoBranch(line[3]);
+			}
+			pc++;
+
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+
+
 	void andd()
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
 			int result = allRegisters.getregistervalue(line[2]) & allRegisters.getregistervalue(line[3]);
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{
@@ -171,6 +199,7 @@ public:
 		{
 			int result = allRegisters.getregistervalue(line[2]) + stoi(line[3]);
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{
@@ -184,6 +213,7 @@ public:
 		{
 			int result = allRegisters.getregistervalue(line[2]) & stoi(line[3]);
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{
@@ -200,6 +230,7 @@ public:
 		{
 			int result = allRegisters.getregistervalue(line[2]) | allRegisters.getregistervalue(line[3]);
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{
@@ -213,6 +244,7 @@ public:
 		{
 			int result = (unsigned)allRegisters.getregistervalue(line[2]) < (unsigned)allRegisters.getregistervalue(line[3]) ? 1 : 0;
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{
@@ -235,6 +267,7 @@ public:
 			}
 			int res = toInteger(result);
 			allRegisters.setregistervalue(line[1], res);
+			pc++;
 		}
 		else
 		{
@@ -307,6 +340,7 @@ public:
 			}
 			int result = toInteger(t3);
 			allRegisters.setregistervalue(line[1],result);
+			pc++;
 		}
 		else
 		{
@@ -329,6 +363,7 @@ public:
 			}
 			int result = toInteger(t3);
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{
@@ -343,6 +378,7 @@ public:
 			int t3 = allRegisters.getregistervalue(line[3]);
 			int t1 = t2 + t3;
 			allRegisters.setregistervalue(line[1], t1);
+			pc++;
 		}
 		else
 		{
@@ -357,6 +393,7 @@ public:
 			int t3 = allRegisters.getregistervalue(line[3]);
 			int t1 = t2 - t3;
 			allRegisters.setregistervalue(line[1], t1);
+			pc++;
 		}
 		else
 		{
@@ -379,6 +416,7 @@ public:
 			}
 			int result = toInteger(t3);
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 			
 		}
 		else
@@ -393,6 +431,7 @@ public:
 		{
 			int result = allRegisters.getregistervalue(line[2]) << allRegisters.getregistervalue(line[3]);
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{
@@ -416,6 +455,7 @@ public:
 				result = LHS >> RHS;
 			}
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{
@@ -430,6 +470,7 @@ public:
 			int result = allRegisters.getregistervalue(line[2]) << stoi(line[3]);
 			allRegisters.setregistervalue(line[1], result);
 			cout << line[1] << " " << result;
+			pc++;
 		}
 		else
 		{
@@ -443,6 +484,7 @@ public:
 		{
 			int result = allMemory.getAddressValue(stoi(line[2]) + allRegisters.getregistervalue(line[3]));
 			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{

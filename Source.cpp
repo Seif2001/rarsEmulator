@@ -53,7 +53,7 @@ string toBinary(int n)
 	return bNum;
 }
 
-vector<string> FigureOut(string currentline, int &pc) // we pass pc by reference since some functions will want to edit the pc counter
+vector<string> FigureOut(string currentline, int pc) // we pass pc by reference since some functions will want to edit the pc counter
 {
 	vector<string> sentence;
 	if (currentline.find(':') != std::string::npos)
@@ -130,12 +130,12 @@ int main()
 	/*pc counter is given in multiples of 4 and
 	is incrimented by 4 each time so we just divide by 4 and now in the loop we can incriment by 1
 	but we need to multiply by 4 if we need to store pc address for example*/
-	while (i < AssemCodeLines.size() && i >= 0)
+	while (sim.getPc() < AssemCodeLines.size() && sim.getPc() >= 0)
 	{
 
-		sim.Setline(FigureOut(AssemCodeLines[i], i));
+		cout << "Executing: " << AssemCodeLines[sim.getPc()] << endl;
+		sim.Setline(FigureOut(AssemCodeLines[sim.getPc()], sim.getPc()));
 
-		cout << "Executing: " << AssemCodeLines[i] << endl;
 		/*
 		// dont know if we'll keep this but im just using it for now so it catches if the user
 		puts a string instead of an int in the file for example addi x3,x4,omar so we dont have to test every function
@@ -146,9 +146,8 @@ int main()
 		}
 		catch (exception e)
 		{
-			cout << AssemCodeLines[i] << " Is not valid syntax. Ignoring that line." << endl;
+			cout << AssemCodeLines[sim.getPc()] << " Is not valid syntax. Ignoring that line." << endl;
 		}
-		i++;
 	}
 
 	//int pcc = sim.JumptoBranch("insideloop");
