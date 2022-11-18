@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "Register.cpp"
 #include "Simulator.cpp"
+#include "Memory.cpp"
 
 using namespace std;
 
@@ -14,16 +15,22 @@ vector<string> load_data(string filePath)
 	ifstream file;
 	file.open(filePath);
 	vector<string> vecOfCode;
-	string s;
+	string s = "";
 	if (file.is_open())
 	{
-
 		while (file)
 		{
 			getline(file, s, '\n');
 			vecOfCode.push_back(s);
 		}
 	}
+	else
+	{
+		string f = "";
+		cout << "Could not find file";
+		exit(0);
+	}
+	vecOfCode.pop_back();
 
 	return vecOfCode;
 }
@@ -100,7 +107,6 @@ string validate(string &line)
 
 int main()
 {
-	Simulator sim;
 	string filename;
 	cout << "Enter the name of the file: ";
 	cin >> filename;
@@ -114,13 +120,20 @@ int main()
 			AssemCodeLines.insert(AssemCodeLines.begin() + i, label);
 		}
 	}
+	Simulator sim(AssemCodeLines);
 	int i = 0;
 	cout << "Enter initial PC counter: ";
 	cin >> i;
-	while (i <= AssemCodeLines.size())
+	i = i / 4;
+	cout << AssemCodeLines.size();
+	/*pc counter is given in multiples of 4 and
+	is incrimented by 4 each time so we just divide by 4 and now in the loop we can incriment by 1
+	but we need to multiply by 4 if we need to store pc address for example*/
+	while (i < AssemCodeLines.size() && i >= 0)
 	{
 
 		sim.Setline(FigureOut(AssemCodeLines[i], i));
+
 		cout << "Executing: " << AssemCodeLines[i] << endl;
 		/*
 		// dont know if we'll keep this but im just using it for now so it catches if the user
