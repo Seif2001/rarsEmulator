@@ -72,6 +72,18 @@ public:
 	void auipc(int &pc)
 	{
 	}
+
+	void bge() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			int result = allRegisters.getregistervalue(line[2]) & allRegisters.getregistervalue(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+		}
+		else
+		{
+			// close program
+		}
+	}
 	void sll()
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
