@@ -293,6 +293,28 @@ public:
 		}
 	}
 
+	void ori() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+
+			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
+			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
+			string t3 = "";
+			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
+			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
+			for (int i = 0; i < t1.size(); i++) {
+				if (t1[i] == '1' || t2[i] == '1') t3 += "1";
+				else t3 += "0";
+			}
+			int result = toInteger(t3);
+			allRegisters.setregistervalue(line[1], result);
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
 	void sll()
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
