@@ -315,6 +315,20 @@ public:
 		}
 	}
 
+	void add() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int t2 = allRegisters.getregistervalue(line[2]);
+			int t3 = allRegisters.getregistervalue(line[3]);
+			int t1 = t2 + t3;
+			allRegisters.setregistervalue(line[1], t1);
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
 	void sll()
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
