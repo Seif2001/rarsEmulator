@@ -221,6 +221,27 @@ public:
 		}
 	}
 
+	void lui() {
+		if (allRegisters.checkReg(line[1]))
+		{
+			string result;
+			string t2 = toBinary(allRegisters.getregistervalue(line[2]));
+			if (allRegisters.getregistervalue(line[2]) < 0) t2 = twosComp(t2);
+			for (int i = 0; i < 20; i++) {
+				result[i] = t2[i];
+			}
+			for (int i = 20; i < 32; i++) {
+				result[i] = '0';
+			}
+			int res = toInteger(result);
+			allRegisters.setregistervalue(line[1], res);
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+	
 	void bge() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
@@ -322,6 +343,43 @@ public:
 			int t3 = allRegisters.getregistervalue(line[3]);
 			int t1 = t2 + t3;
 			allRegisters.setregistervalue(line[1], t1);
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void sub() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int t2 = allRegisters.getregistervalue(line[2]);
+			int t3 = allRegisters.getregistervalue(line[3]);
+			int t1 = t2 - t3;
+			allRegisters.setregistervalue(line[1], t1);
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void xorr() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+
+			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
+			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
+			string t3 = "";
+			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
+			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
+			for (int i = 0; i < t1.size(); i++) {
+				if (t1[i] == t2[i]) t3 += "0";
+				else t3 += "1";
+			}
+			int result = toInteger(t3);
+			allRegisters.setregistervalue(line[1], result);
+			
 		}
 		else
 		{
