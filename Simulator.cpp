@@ -274,6 +274,32 @@ public:
 			exit(0);
 		}
 	}
+
+	void jal () {
+		if (allRegisters.checkReg(line[1]))
+		{
+			allRegisters.setregistervalue(line[1], pc + 4);
+			JumptoBranch(line[2]);
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void jalr() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			allRegisters.setregistervalue(line[1], pc + 4);
+			int offset = stoi(line[2]);
+			int t1 = allRegisters.getregistervalue(line[3]) + offset;
+			pc = t1;
+		}
+		else
+		{
+			exit(0);
+		}
+	}
 	
 	void bge() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
