@@ -297,6 +297,7 @@ public:
 			exit(0);
 		}
 		allRegisters.setregistervalue("x0", 0);
+		cout << "\nCurrent PC: " << (pc * 4) - 4 << endl;
 		allRegisters.print();
 		allMemory.print();
 	}
