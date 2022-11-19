@@ -24,6 +24,7 @@ public:
 		this->rawCode = rawCode;
 		this->pc = pc;
 		allMemory.setAddressValue(0, -65537);
+		allMemory.setAddressValue(1, 537);
 	}
 	int getPc() {
 		return pc;
@@ -171,6 +172,9 @@ public:
 		else if (currFunction == "jalr" && line.size() == 4) {
 			jalr();
 		}
+		else if (currFunction == "lb" && line.size() == 4) {
+			lb();
+		}
 		else if (currFunction == "lh" && line.size() == 4) {
 			lh();
 		}
@@ -184,6 +188,10 @@ public:
 		else if (currFunction == "or" && line.size() == 4)
 		{
 			orr();
+		}
+		else if (currFunction == "sh" && line.size() == 4)
+		{
+			sh();
 		}
 		else if (currFunction == "sll" && line.size() == 4)
 		{
@@ -365,8 +373,8 @@ public:
 		{
 			string unsignedt1;
 			string unsignedt2;
-			int t1 = abs(allRegisters.getregistervalue(line[1]));
-			int t2 = abs(allRegisters.getregistervalue(line[2]));
+			int t1 = allRegisters.getregistervalue(line[1]);
+			int t2 = allRegisters.getregistervalue(line[2]);
 			string label = line[3];
 			if (t1 < 0) {
 				unsignedt1 = toBinary(t1);
@@ -439,8 +447,8 @@ public:
 			string t1 = toBinary(allMemory.getAddressValue(t2));
 			string bword = "";
 			int j = 0;
-			for (int i = 24; i >= 31; i--) {
-				bword[j] = t1[i];
+			for (int i = 24; i <= 31; i++) {
+				bword += t1[i];
 			}
 			int t = toInteger(bword);
 			t1 = toBinary(t);
@@ -572,7 +580,36 @@ public:
 				
 			}
 			else {
-				binRes = binRes.substr(binRes.length()-16, 16);
+				binRes = binRes.substr(binRes.length()-8, 8);
+				value = toInteger(binRes) * pow(-1, flag);
+			}
+			allMemory.setAddressValue(address, value);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void sh() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			int address = ((stoi(line[2])) + allRegisters.getregistervalue(line[3]));
+			int value = allRegisters.getregistervalue(line[1]);
+			bool flag = false;
+			if (value < 0) {
+				flag = true;
+			}
+			value = abs(value);
+			string binRes = toBinary(value);
+			if (binRes.length() <= 16) {
+				value = value * pow(-1, flag);
+
+			}
+			else {
+				binRes = binRes.substr(binRes.length() - 16, 16);
 				value = toInteger(binRes) * pow(-1, flag);
 			}
 			allMemory.setAddressValue(address, value);
