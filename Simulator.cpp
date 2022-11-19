@@ -273,6 +273,7 @@ public:
 			cout << "That function doesnt exist, or you wrote it wrong!\n";
 			exit(0);
 		}
+		allRegisters.setregistervalue("x0", 0);
 		allRegisters.print();
 		allMemory.print();
 	}
