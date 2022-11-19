@@ -76,6 +76,23 @@ public:
 		}
 		return num;
 	}
+	int toIntegerunsigned(string x)
+	{
+		int num = 0;
+		int k = 0;
+		string curr = "";
+		curr += x[0];
+		for (int i = x.length() - 1; i >= 0; i--)
+		{
+			string curr = "";
+			curr += x[i];
+			if (i != 0)
+			{
+				num += pow(2, k++) * stoi(curr);
+			}
+		}
+		return num;
+	}
 	string toBinary(int n)
 	{
 		string bNum = "";
@@ -115,6 +132,10 @@ public:
 			return;
 		}
 
+		else if (currFunction == "addi" && line.size() == 4)
+		{
+			addi();
+		}
 		else if (currFunction == "and" && line.size() == 4) // I added the line size because if its less or more the user put more or less stuff which is invalid
 		{
 			andd();
@@ -123,45 +144,57 @@ public:
 		{
 			andi();
 		}
-		else if (currFunction == "sltu" && line.size() == 4)
-		{
-			sltu();
+		else if (currFunction == "bge" && line.size() == 4) {
+			bge();
 		}
-		else if (currFunction == "sll" && line.size() == 4)
-		{
-			sll();
+		else if (currFunction == "bgeu" && line.size() == 4) {
+			bgeu();
 		}
-		else if (currFunction == "sra" && line.size() == 4)
-		{
-			sra();
+		else if (currFunction == "blt" && line.size() == 4) {
+			blt();
 		}
-		else if (currFunction == "slli" && line.size() == 4)
-		{
-			slli();
+		else if (currFunction == "bltu" && line.size() == 4) {
+			bltu();
+		}
+		else if (currFunction == "bne" && line.size() == 4) {
+			bne();
+		}
+		else if ((currFunction == "ebreak" || currFunction == "ecall") && line.size() == 1) {
+			exit(0);
+		}
+		else if (currFunction == "fence" && line.size() == 3) {
+			exit(0);
+		}
+		else if (currFunction == "jal" && line.size() == 3) {
+			jal();
+		}
+		else if (currFunction == "jalr" && line.size() == 4) {
+			jalr();
+		}
+		else if (currFunction == "lh" && line.size() == 4) {
+			lh();
+		}
+		else if (currFunction == "lui" && line.size() == 3) {
+			lui();
 		}
 		else if (currFunction == "lw" && line.size() == 4)
 		{
 			lw();
 		}
-		else if (currFunction == "addi" && line.size() == 4)
-		{
-			addi();
-		}
 		else if (currFunction == "or" && line.size() == 4)
 		{
 			orr();
 		}
-		else if (currFunction == "bne" && line.size() == 4) {
-			bne();
+		else if (currFunction == "sll" && line.size() == 4)
+		{
+			sll();
 		}
-		else if (currFunction == "blt" && line.size() == 4){
-			blt();
+		else if (currFunction == "slli" && line.size() == 4)
+		{
+			slli();
 		}
-		else if (currFunction == "lh" && line.size() == 4) {
-			lh();
-		}
-		else if (currFunction == "sw" && line.size() == 4) {
-			sw();
+		else if (currFunction == "slt" && line.size() == 4) {
+			slt();
 		}
 		else if (currFunction == "slti" && line.size() == 4) {
 			slti();
@@ -169,33 +202,58 @@ public:
 		else if (currFunction == "sltiu" && line.size() == 4) {
 			sltiu();
 		}
+		else if (currFunction == "sltu" && line.size() == 4)
+		{
+			sltu();
+		}
+		else if (currFunction == "sra" && line.size() == 4)
+		{
+			sra();
+		}
 		else if (currFunction == "srai" && line.size() == 4) {
 			srai();
-		}
-		else if (currFunction == "slt" && line.size() == 4) {
-			slt();
 		}
 		else if (currFunction == "srl" && line.size() == 4) {
 			srl();
 		}
+		else if (currFunction == "sw" && line.size() == 4) {
+			sw();
+		}
+
+
 		else
 		{
 			cout << "That function doesnt exist, or you wrote it wrong!\n";
+			exit(0);
 		}
 		allRegisters.print();
 		allMemory.print();
 	}
 
+	//Instructions:
 
-	
-	void bne() {
+	void add() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int t2 = allRegisters.getregistervalue(line[2]);
+			int t3 = allRegisters.getregistervalue(line[3]);
+			int t1 = t2 + t3;
+			allRegisters.setregistervalue(line[1], t1);
+			pc++;
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void addi()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-			if (allRegisters.getregistervalue(line[1]) != allRegisters.getregistervalue(line[2])) {
-				JumptoBranch(line[3]);
-			}
+			int result = allRegisters.getregistervalue(line[2]) + stoi(line[3]);
+			allRegisters.setregistervalue(line[1], result);
 			pc++;
-
 		}
 		else
 		{
@@ -204,7 +262,87 @@ public:
 		}
 	}
 
+	void andd()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int result = allRegisters.getregistervalue(line[2]) & allRegisters.getregistervalue(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
 
+	void andi()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			int result = allRegisters.getregistervalue(line[2]) & stoi(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void auipc(int& pc)
+	{
+	}
+
+	void bge() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			int t1 = allRegisters.getregistervalue(line[1]);
+			int t2 = allRegisters.getregistervalue(line[2]);
+			string label = line[3];
+			if (t1 >= t2) {
+				JumptoBranch(label);
+			}
+			else {
+				pc++;
+			}
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void bgeu() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			string unsignedt1;
+			string unsignedt2;
+			int t1 = allRegisters.getregistervalue(line[1]);
+			int t2 = allRegisters.getregistervalue(line[2]);
+			if (t1 < 0) {
+				unsignedt1 = toBinary(t1);
+				t1 = toIntegerunsigned(unsignedt1);
+			}
+			if (t2 < 0) {
+				unsignedt2 = toBinary(t2);
+				t2 = toIntegerunsigned(unsignedt2);
+			}
+			string label = line[3];
+			if (t1 >= t2) {
+				JumptoBranch(label);
+			}
+			else {
+				pc++;
+			}
+		}
+		else
+		{
+			exit(0);
+		}
+	}
 
 	void blt() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
@@ -222,6 +360,99 @@ public:
 		}
 	}
 
+	void bltu() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			string unsignedt1;
+			string unsignedt2;
+			int t1 = abs(allRegisters.getregistervalue(line[1]));
+			int t2 = abs(allRegisters.getregistervalue(line[2]));
+			string label = line[3];
+			if (t1 < 0) {
+				unsignedt1 = toBinary(t1);
+				t1 = toIntegerunsigned(unsignedt1);
+			}
+			if (t2 < 0) {
+				unsignedt2 = toBinary(t2);
+				t2 = toIntegerunsigned(unsignedt2);
+			}
+			if (t1 < t2) {
+				JumptoBranch(label);
+			}
+			else {
+				pc++;
+			}
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+	
+	void bne() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			if (allRegisters.getregistervalue(line[1]) != allRegisters.getregistervalue(line[2])) {
+				JumptoBranch(line[3]);
+			}
+			pc++;
+
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void jal() {
+		if (allRegisters.checkReg(line[1]))
+		{
+			allRegisters.setregistervalue(line[1], pc + 1);
+			JumptoBranch(line[2]);
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void jalr() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			allRegisters.setregistervalue(line[1], pc + 1);
+			int offset = stoi(line[2]);
+			int t1 = allRegisters.getregistervalue(line[3]) + offset;
+			pc = t1;
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void lb() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			int offset = stoi(line[2]);
+			int t2 = allRegisters.getregistervalue(line[3]) + offset;
+			string t1 = toBinary(allMemory.getAddressValue(t2));
+			string bword = "";
+			int j = 0;
+			for (int i = 24; i >= 31; i--) {
+				bword[j] = t1[i];
+			}
+			int t = toInteger(bword);
+			t1 = toBinary(t);
+			t = toInteger(t1);
+			allRegisters.setregistervalue(line[1], t);
+			pc++;
+		}
+		else
+		{
+			exit(0);
+		}
+	}
 
 	void lh() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
@@ -249,6 +480,82 @@ public:
 			exit(0);
 		}
 	}
+
+	void lui() { //not wokring
+		if (allRegisters.checkReg(line[1]))
+		{
+			string result;
+			string t2 = toBinary(stoi(line[2]));
+			if (allRegisters.getregistervalue(line[2]) < 0) t2 = twosComp(t2);
+			for (int i = 0; i < 20; i++) {
+				result += t2[i];
+			}
+			for (int i = 20; i < 32; i++) {
+				result[i] = '0';
+			}
+			int res = toInteger(result);
+			allRegisters.setregistervalue(line[1], res);
+			pc++;
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void lw()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			int result = allMemory.getAddressValue(stoi(line[2]) + allRegisters.getregistervalue(line[3]));
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void ori() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+
+			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
+			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
+			string t3 = "";
+			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
+			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
+			for (int i = 0; i < t1.size(); i++) {
+				if (t1[i] == '1' || t2[i] == '1') t3 += "1";
+				else t3 += "0";
+			}
+			int result = toInteger(t3);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+
+	void orr()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int result = allRegisters.getregistervalue(line[2]) | allRegisters.getregistervalue(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
 	void sb() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
@@ -278,13 +585,42 @@ public:
 		}
 	}
 
-
-	void sw() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+	void sll()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
-			int address = ((stoi(line[2])) + allRegisters.getregistervalue(line[3]));
-			int value = allRegisters.getregistervalue(line[1]);
-			allMemory.setAddressValue(address, value);
+			int result = allRegisters.getregistervalue(line[2]) << allRegisters.getregistervalue(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void slli()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			int result = allRegisters.getregistervalue(line[2]) << stoi(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+			cout << line[1] << " " << result;
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void slt() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int value = allRegisters.getregistervalue(line[2]) < allRegisters.getregistervalue(line[3]) ? 1 : 0;
+			allRegisters.setregistervalue(line[1], value);
 			pc++;
 		}
 		else
@@ -307,6 +643,7 @@ public:
 			exit(0);
 		}
 	}
+
 	void sltiu() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
@@ -321,10 +658,11 @@ public:
 		}
 	}
 
-	void srai() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+	void sltu()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
-			int result = allRegisters.getregistervalue(line[2]) >> stoi(line[3]);
+			int result = (unsigned)allRegisters.getregistervalue(line[2]) < (unsigned)allRegisters.getregistervalue(line[3]) ? 1 : 0;
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
@@ -335,12 +673,22 @@ public:
 		}
 	}
 
-
-	void slt() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2])&& allRegisters.checkReg(line[3]))
+	void sra()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
-			int value = allRegisters.getregistervalue(line[2]) < allRegisters.getregistervalue(line[3]) ? 1 : 0;
-			allRegisters.setregistervalue(line[1], value);
+			int LHS = allRegisters.getregistervalue(line[2]);
+			int RHS = allRegisters.getregistervalue(line[3]);
+			int result = 0;
+			if (LHS < 0 && RHS > 0)
+			{
+				result = LHS >> RHS | ~(~0U >> RHS);
+			}
+			else
+			{
+				result = LHS >> RHS;
+			}
+			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
 		else
@@ -350,11 +698,10 @@ public:
 		}
 	}
 
-	void sll()
-	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+	void srai() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-			int result = allRegisters.getregistervalue(line[2]) << allRegisters.getregistervalue(line[3]);
+			int result = allRegisters.getregistervalue(line[2]) >> stoi(line[3]);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
@@ -380,155 +727,14 @@ public:
 		}
 	}
 
-
-
-	void andd()
-	{
+	void sub() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
-			int result = allRegisters.getregistervalue(line[2]) & allRegisters.getregistervalue(line[3]);
-			allRegisters.setregistervalue(line[1], result);
-			pc++;
-		}
-		else
-		{
-			cout << "This line contains an error please fix it.\nExiting.\n";
-			exit(0);
-		}
-	}
-	void addi()
-	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
-		{
-			int result = allRegisters.getregistervalue(line[2]) + stoi(line[3]);
-			allRegisters.setregistervalue(line[1], result);
-			pc++;
-		}
-		else
-		{
-			cout << "This line contains an error please fix it.\nExiting.\n";
-			exit(0);
-		}
-	}
-	void andi()
-	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
-		{
-			int result = allRegisters.getregistervalue(line[2]) & stoi(line[3]);
-			allRegisters.setregistervalue(line[1], result);
-			pc++;
-		}
-		else
-		{
-			cout << "This line contains an error please fix it.\nExiting.\n";
-			exit(0);
-		}
-	}
-	void auipc(int &pc)
-	{
-	}
-	void orr()
-	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
-		{
-			int result = allRegisters.getregistervalue(line[2]) | allRegisters.getregistervalue(line[3]);
-			allRegisters.setregistervalue(line[1], result);
-			pc++;
-		}
-		else
-		{
-			cout << "This line contains an error please fix it.\nExiting.\n";
-			exit(0);
-		}
-	}
-	void sltu()
-	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
-		{
-			int result = (unsigned)allRegisters.getregistervalue(line[2]) < (unsigned)allRegisters.getregistervalue(line[3]) ? 1 : 0;
-			allRegisters.setregistervalue(line[1], result);
-			pc++;
-		}
-		else
-		{
-			cout << "This line contains an error please fix it.\nExiting.\n";
-			exit(0);
-		}
-	}
-
-	void lui() {
-		if (allRegisters.checkReg(line[1]))
-		{
-			string result;
-			string t2 = toBinary(allRegisters.getregistervalue(line[2]));
-			if (allRegisters.getregistervalue(line[2]) < 0) t2 = twosComp(t2);
-			for (int i = 0; i < 20; i++) {
-				result[i] = t2[i];
-			}
-			for (int i = 20; i < 32; i++) {
-				result[i] = '0';
-			}
-			int res = toInteger(result);
-			allRegisters.setregistervalue(line[1], res);
-			pc++;
-		}
-		else
-		{
-			exit(0);
-		}
-	}
-
-	void jal () {
-		if (allRegisters.checkReg(line[1]))
-		{
-			allRegisters.setregistervalue(line[1], pc + 4);
-			JumptoBranch(line[2]);
-		}
-		else
-		{
-			exit(0);
-		}
-	}
-
-	void jalr() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
-		{
-			allRegisters.setregistervalue(line[1], pc + 4);
-			int offset = stoi(line[2]);
-			int t1 = allRegisters.getregistervalue(line[3]) + offset;
-			pc = t1;
-		}
-		else
-		{
-			exit(0);
-		}
-	}
-
-	void lb() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
-		{
-			int t2 = allRegisters.getregistervalue(line[3]);
-			int t1 = allMemory.getAddressValue(t2);
-			allRegisters.setregistervalue(line[1], pc + 4);
-			int offset = stoi(line[2]);
-			//int t1 = allRegisters.getregistervalue(line[3]) + offset;
-			pc = t1;
-		}
-		else
-		{
-			exit(0);
-		}
-	}
-	
-	void bge() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
-		{
-			int t1 = allRegisters.getregistervalue(line[1]);
 			int t2 = allRegisters.getregistervalue(line[2]);
-			string label = line[3];
-			if (t1 >= t2) {
-				JumptoBranch(label);
-			}
+			int t3 = allRegisters.getregistervalue(line[3]);
+			int t1 = t2 - t3;
+			allRegisters.setregistervalue(line[1], t1);
+			pc++;
 		}
 		else
 		{
@@ -536,33 +742,38 @@ public:
 		}
 	}
 
-	void bltu() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+	void sw() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
-			
-			int t1 = abs(allRegisters.getregistervalue(line[1]));
-			int t2 = abs(allRegisters.getregistervalue(line[2]));
-			string label = line[3];
-			if (t1 < t2) {
-				JumptoBranch(label);
-			}
+			int address = ((stoi(line[2])) + allRegisters.getregistervalue(line[3]));
+			int value = allRegisters.getregistervalue(line[1]);
+			allMemory.setAddressValue(address, value);
+			pc++;
 		}
 		else
 		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
 			exit(0);
 		}
 	}
 
-	void bgeu() {
+	void xorr() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 
-			int t1 = abs(allRegisters.getregistervalue(line[1]));
-			int t2 = abs(allRegisters.getregistervalue(line[2]));
-			string label = line[3];
-			if (t1 >= t2) {
-				JumptoBranch(label);
+			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
+			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
+			string t3 = "";
+			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
+			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
+			for (int i = 0; i < t1.size(); i++) {
+				if (t1[i] == t2[i]) t3 += "0";
+				else t3 += "1";
 			}
+			int result = toInteger(t3);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+
 		}
 		else
 		{
@@ -584,29 +795,6 @@ public:
 				else t3 += "1";
 			}
 			int result = toInteger(t3);
-			allRegisters.setregistervalue(line[1],result);
-			pc++;
-		}
-		else
-		{
-			exit(0);
-		}
-	}
-
-	void ori() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
-		{
-
-			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
-			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
-			string t3 = "";
-			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
-			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
-			for (int i = 0; i < t1.size(); i++) {
-				if (t1[i] == '1' || t2[i] == '1') t3 += "1";
-				else t3 += "0";
-			}
-			int result = toInteger(t3);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
@@ -616,114 +804,6 @@ public:
 		}
 	}
 
-	void add() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
-		{
-			int t2 = allRegisters.getregistervalue(line[2]);
-			int t3 = allRegisters.getregistervalue(line[3]);
-			int t1 = t2 + t3;
-			allRegisters.setregistervalue(line[1], t1);
-			pc++;
-		}
-		else
-		{
-			exit(0);
-		}
-	}
-
-	void sub() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
-		{
-			int t2 = allRegisters.getregistervalue(line[2]);
-			int t3 = allRegisters.getregistervalue(line[3]);
-			int t1 = t2 - t3;
-			allRegisters.setregistervalue(line[1], t1);
-			pc++;
-		}
-		else
-		{
-			exit(0);
-		}
-	}
-
-	void xorr() {
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
-		{
-
-			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
-			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
-			string t3 = "";
-			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
-			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
-			for (int i = 0; i < t1.size(); i++) {
-				if (t1[i] == t2[i]) t3 += "0";
-				else t3 += "1";
-			}
-			int result = toInteger(t3);
-			allRegisters.setregistervalue(line[1], result);
-			pc++;
-			
-		}
-		else
-		{
-			exit(0);
-		}
-	}
-
-	
-	void sra()
-	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
-		{
-			int LHS = allRegisters.getregistervalue(line[2]);
-			int RHS = allRegisters.getregistervalue(line[3]);
-			int result = 0;
-			if (LHS < 0 && RHS > 0)
-			{
-				result = LHS >> RHS | ~(~0U >> RHS);
-			}
-			else
-			{
-				result = LHS >> RHS;
-			}
-			allRegisters.setregistervalue(line[1], result);
-			pc++;
-		}
-		else
-		{
-			cout << "This line contains an error please fix it.\nExiting.\n";
-			exit(0);
-		}
-	}
-	void slli()
-	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
-		{
-			int result = allRegisters.getregistervalue(line[2]) << stoi(line[3]);
-			allRegisters.setregistervalue(line[1], result);
-			cout << line[1] << " " << result;
-			pc++;
-		}
-		else
-		{
-			cout << "This line contains an error please fix it.\nExiting.\n";
-			exit(0);
-		}
-	}
-	void lw()
-	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
-		{
-			int result = allMemory.getAddressValue(stoi(line[2]) + allRegisters.getregistervalue(line[3]));
-			allRegisters.setregistervalue(line[1], result);
-			pc++;
-		}
-		else
-		{
-			cout << "This line contains an error please fix it.\nExiting.\n";
-			exit(0);
-		}
-	}
 	~Simulator()
 	{
 	}
