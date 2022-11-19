@@ -17,7 +17,6 @@ private:
 	int const initialpc;
 	int pc;
 
-
 public:
 	Simulator(vector<string> rawCode, int pc) : initialpc(pc)
 	{
@@ -26,7 +25,8 @@ public:
 		allMemory.setAddressValue(0, -65537);
 		allMemory.setAddressValue(1, 537);
 	}
-	int getPc() {
+	int getPc()
+	{
 		return pc;
 	}
 	string twosComp(string x)
@@ -108,15 +108,17 @@ public:
 		return bNum;
 	}
 
-	void JumptoBranch(string label) {
+	void JumptoBranch(string label)
+	{
 		label = label + ":";
-		for (int i = 0; i < rawCode.size(); i++) {
-			if (rawCode[i] == label) {
-				//i = i * 4;
+		for (int i = 0; i < rawCode.size(); i++)
+		{
+			if (rawCode[i] == label)
+			{
+				// i = i * 4;
 				pc = i;
 				break;
 			}
-			
 		}
 	}
 
@@ -145,40 +147,64 @@ public:
 		{
 			andi();
 		}
-		else if (currFunction == "bge" && line.size() == 4) {
+		else if (currFunction == "auipc" && line.size() == 3)
+		{
+			auipc();
+		}
+		else if (currFunction == "bge" && line.size() == 4)
+		{
 			bge();
 		}
-		else if (currFunction == "bgeu" && line.size() == 4) {
+		else if (currFunction == "bgeu" && line.size() == 4)
+		{
 			bgeu();
 		}
-		else if (currFunction == "blt" && line.size() == 4) {
+		else if (currFunction == "blt" && line.size() == 4)
+		{
 			blt();
 		}
-		else if (currFunction == "bltu" && line.size() == 4) {
+		else if (currFunction == "bltu" && line.size() == 4)
+		{
 			bltu();
 		}
-		else if (currFunction == "bne" && line.size() == 4) {
+		else if (currFunction == "bne" && line.size() == 4)
+		{
 			bne();
 		}
-		else if ((currFunction == "ebreak" || currFunction == "ecall") && line.size() == 1) {
+		else if ((currFunction == "ebreak" || currFunction == "ecall") && line.size() == 1)
+		{
 			exit(0);
 		}
-		else if (currFunction == "fence" && line.size() == 3) {
+		else if (currFunction == "fence" && line.size() == 3)
+		{
 			exit(0);
 		}
-		else if (currFunction == "jal" && line.size() == 3) {
+		else if (currFunction == "jal" && line.size() == 3)
+		{
 			jal();
 		}
-		else if (currFunction == "jalr" && line.size() == 4) {
+		else if (currFunction == "jalr" && line.size() == 4)
+		{
 			jalr();
 		}
-		else if (currFunction == "lb" && line.size() == 4) {
+		else if (currFunction == "lb" && line.size() == 4)
+		{
 			lb();
 		}
-		else if (currFunction == "lh" && line.size() == 4) {
+		else if (currFunction == "lbu" && line.size() == 4)
+		{
+			lbu();
+		}
+		else if (currFunction == "lh" && line.size() == 4)
+		{
 			lh();
 		}
-		else if (currFunction == "lui" && line.size() == 3) {
+		else if (currFunction == "lhu" && line.size() == 4)
+		{
+			lhu();
+		}
+		else if (currFunction == "lui" && line.size() == 3)
+		{
 			lui();
 		}
 		else if (currFunction == "lw" && line.size() == 4)
@@ -201,13 +227,16 @@ public:
 		{
 			slli();
 		}
-		else if (currFunction == "slt" && line.size() == 4) {
+		else if (currFunction == "slt" && line.size() == 4)
+		{
 			slt();
 		}
-		else if (currFunction == "slti" && line.size() == 4) {
+		else if (currFunction == "slti" && line.size() == 4)
+		{
 			slti();
 		}
-		else if (currFunction == "sltiu" && line.size() == 4) {
+		else if (currFunction == "sltiu" && line.size() == 4)
+		{
 			sltiu();
 		}
 		else if (currFunction == "sltu" && line.size() == 4)
@@ -218,16 +247,22 @@ public:
 		{
 			sra();
 		}
-		else if (currFunction == "srai" && line.size() == 4) {
+		else if (currFunction == "srai" && line.size() == 4)
+		{
 			srai();
 		}
-		else if (currFunction == "srl" && line.size() == 4) {
+		else if (currFunction == "srl" && line.size() == 4)
+		{
 			srl();
 		}
-		else if (currFunction == "sw" && line.size() == 4) {
+		else if (currFunction == "srli" && line.size() == 4)
+		{
+			srli();
+		}
+		else if (currFunction == "sw" && line.size() == 4)
+		{
 			sw();
 		}
-
 
 		else
 		{
@@ -238,9 +273,10 @@ public:
 		allMemory.print();
 	}
 
-	//Instructions:
+	// Instructions:
 
-	void add() {
+	void add()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
 			int t2 = allRegisters.getregistervalue(line[2]);
@@ -300,20 +336,33 @@ public:
 		}
 	}
 
-	void auipc(int& pc)
+	void auipc()
 	{
+		if (allRegisters.checkReg(line[1]))
+		{
+			int result = pc * 4 + (stoi(line[2]) << 12);
+			allRegisters.setregistervalue(line[2], result);
+			pc++;
+		}
+		else
+		{
+			exit(0);
+		}
 	}
 
-	void bge() {
+	void bge()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 			int t1 = allRegisters.getregistervalue(line[1]);
 			int t2 = allRegisters.getregistervalue(line[2]);
 			string label = line[3];
-			if (t1 >= t2) {
+			if (t1 >= t2)
+			{
 				JumptoBranch(label);
 			}
-			else {
+			else
+			{
 				pc++;
 			}
 		}
@@ -323,26 +372,31 @@ public:
 		}
 	}
 
-	void bgeu() {
+	void bgeu()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 			string unsignedt1;
 			string unsignedt2;
 			int t1 = allRegisters.getregistervalue(line[1]);
 			int t2 = allRegisters.getregistervalue(line[2]);
-			if (t1 < 0) {
+			if (t1 < 0)
+			{
 				unsignedt1 = toBinary(t1);
 				t1 = toIntegerunsigned(unsignedt1);
 			}
-			if (t2 < 0) {
+			if (t2 < 0)
+			{
 				unsignedt2 = toBinary(t2);
 				t2 = toIntegerunsigned(unsignedt2);
 			}
 			string label = line[3];
-			if (t1 >= t2) {
+			if (t1 >= t2)
+			{
 				JumptoBranch(label);
 			}
-			else {
+			else
+			{
 				pc++;
 			}
 		}
@@ -352,14 +406,15 @@ public:
 		}
 	}
 
-	void blt() {
+	void blt()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-			if (allRegisters.getregistervalue(line[1]) < allRegisters.getregistervalue(line[2])) {
+			if (allRegisters.getregistervalue(line[1]) < allRegisters.getregistervalue(line[2]))
+			{
 				JumptoBranch(line[3]);
 			}
 			pc++;
-
 		}
 		else
 		{
@@ -368,7 +423,8 @@ public:
 		}
 	}
 
-	void bltu() {
+	void bltu()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 			string unsignedt1;
@@ -376,18 +432,22 @@ public:
 			int t1 = allRegisters.getregistervalue(line[1]);
 			int t2 = allRegisters.getregistervalue(line[2]);
 			string label = line[3];
-			if (t1 < 0) {
+			if (t1 < 0)
+			{
 				unsignedt1 = toBinary(t1);
 				t1 = toIntegerunsigned(unsignedt1);
 			}
-			if (t2 < 0) {
+			if (t2 < 0)
+			{
 				unsignedt2 = toBinary(t2);
 				t2 = toIntegerunsigned(unsignedt2);
 			}
-			if (t1 < t2) {
+			if (t1 < t2)
+			{
 				JumptoBranch(label);
 			}
-			else {
+			else
+			{
 				pc++;
 			}
 		}
@@ -396,15 +456,16 @@ public:
 			exit(0);
 		}
 	}
-	
-	void bne() {
+
+	void bne()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-			if (allRegisters.getregistervalue(line[1]) != allRegisters.getregistervalue(line[2])) {
+			if (allRegisters.getregistervalue(line[1]) != allRegisters.getregistervalue(line[2]))
+			{
 				JumptoBranch(line[3]);
 			}
 			pc++;
-
 		}
 		else
 		{
@@ -413,7 +474,8 @@ public:
 		}
 	}
 
-	void jal() {
+	void jal()
+	{
 		if (allRegisters.checkReg(line[1]))
 		{
 			allRegisters.setregistervalue(line[1], pc + 1);
@@ -425,7 +487,8 @@ public:
 		}
 	}
 
-	void jalr() {
+	void jalr()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
 			allRegisters.setregistervalue(line[1], pc + 1);
@@ -439,7 +502,8 @@ public:
 		}
 	}
 
-	void lb() {
+	void lb()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
 			int offset = stoi(line[2]);
@@ -447,7 +511,32 @@ public:
 			string t1 = toBinary(allMemory.getAddressValue(t2));
 			string bword = "";
 			int j = 0;
-			for (int i = 24; i <= 31; i++) {
+			for (int i = 24; i <= 31; i++)
+			{
+				bword += t1[i];
+			}
+			int t = toInteger(bword);
+			t1 = toBinary(t);
+			t = toInteger(t1);
+			allRegisters.setregistervalue(line[1], t);
+			pc++;
+		}
+		else
+		{
+			exit(0);
+		}
+	}
+	void lbu()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			int offset = stoi(line[2]);
+			int t2 = allRegisters.getregistervalue(line[3]) + offset;
+			string t1 = toBinary(allMemory.getAddressValue(t2));
+			string bword = "";
+			int j = 0;
+			for (int i = 24; i <= 31; i++)
+			{
 				bword += t1[i];
 			}
 			int t = toInteger(bword);
@@ -462,21 +551,25 @@ public:
 		}
 	}
 
-	void lh() {
+	void lh()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
 			int result = allMemory.getAddressValue(stoi(line[2]) + allRegisters.getregistervalue(line[3]));
-			bool flag =false;
-			if (result < 0) {
+			bool flag = false;
+			if (result < 0)
+			{
 				flag = true;
 			}
 			result = abs(result);
 			string binRes = toBinary(result);
-			if (binRes.length() <= 16 ) {
-				result = result*pow(-1, flag);
+			if (binRes.length() <= 16)
+			{
+				result = result * pow(-1, flag);
 			}
-			else {
-				binRes = binRes.substr(binRes.length()-16, 16);
+			else
+			{
+				binRes = binRes.substr(binRes.length() - 16, 16);
 				result = toInteger(binRes) * pow(-1, flag);
 			}
 			allRegisters.setregistervalue(line[1], result);
@@ -488,17 +581,50 @@ public:
 			exit(0);
 		}
 	}
-
-	void lui() { //not wokring
+	void lhu()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			int result = allMemory.getAddressValue(stoi(line[2]) + allRegisters.getregistervalue(line[3]));
+			bool flag = false;
+			if (result < 0)
+			{
+				flag = true;
+			}
+			result = abs(result);
+			string binRes = toBinary(result);
+			if (binRes.length() <= 16)
+			{
+				result = result * pow(-1, flag);
+			}
+			else
+			{
+				binRes = binRes.substr(binRes.length() - 16, 16);
+				result = (unsigned)(toInteger(binRes) * pow(-1, flag));
+			}
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+	void lui()
+	{ // not wokring
 		if (allRegisters.checkReg(line[1]))
 		{
 			string result;
 			string t2 = toBinary(stoi(line[2]));
-			if (allRegisters.getregistervalue(line[2]) < 0) t2 = twosComp(t2);
-			for (int i = 0; i < 20; i++) {
+			if (allRegisters.getregistervalue(line[2]) < 0)
+				t2 = twosComp(t2);
+			for (int i = 0; i < 20; i++)
+			{
 				result += t2[i];
 			}
-			for (int i = 20; i < 32; i++) {
+			for (int i = 20; i < 32; i++)
+			{
 				result[i] = '0';
 			}
 			int res = toInteger(result);
@@ -526,18 +652,24 @@ public:
 		}
 	}
 
-	void ori() {
+	void ori()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 
 			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
 			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
 			string t3 = "";
-			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
-			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
-			for (int i = 0; i < t1.size(); i++) {
-				if (t1[i] == '1' || t2[i] == '1') t3 += "1";
-				else t3 += "0";
+			if (allRegisters.getregistervalue(line[2]) < 0)
+				t1 = twosComp(t1);
+			if (allRegisters.getregistervalue(line[3]) < 0)
+				t2 = twosComp(t2);
+			for (int i = 0; i < t1.size(); i++)
+			{
+				if (t1[i] == '1' || t2[i] == '1')
+					t3 += "1";
+				else
+					t3 += "0";
 			}
 			int result = toInteger(t3);
 			allRegisters.setregistervalue(line[1], result);
@@ -564,23 +696,26 @@ public:
 		}
 	}
 
-	void sb() {
+	void sb()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
 			int address = ((stoi(line[2])) + allRegisters.getregistervalue(line[3]));
 			int value = allRegisters.getregistervalue(line[1]);
 			bool flag = false;
-			if (value < 0) {
+			if (value < 0)
+			{
 				flag = true;
 			}
 			value = abs(value);
 			string binRes = toBinary(value);
-			if (binRes.length() <= 8) {
+			if (binRes.length() <= 8)
+			{
 				value = value * pow(-1, flag);
-				
 			}
-			else {
-				binRes = binRes.substr(binRes.length()-8, 8);
+			else
+			{
+				binRes = binRes.substr(binRes.length() - 8, 8);
 				value = toInteger(binRes) * pow(-1, flag);
 			}
 			allMemory.setAddressValue(address, value);
@@ -593,22 +728,25 @@ public:
 		}
 	}
 
-	void sh() {
+	void sh()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
 			int address = ((stoi(line[2])) + allRegisters.getregistervalue(line[3]));
 			int value = allRegisters.getregistervalue(line[1]);
 			bool flag = false;
-			if (value < 0) {
+			if (value < 0)
+			{
 				flag = true;
 			}
 			value = abs(value);
 			string binRes = toBinary(value);
-			if (binRes.length() <= 16) {
+			if (binRes.length() <= 16)
+			{
 				value = value * pow(-1, flag);
-
 			}
-			else {
+			else
+			{
 				binRes = binRes.substr(binRes.length() - 16, 16);
 				value = toInteger(binRes) * pow(-1, flag);
 			}
@@ -653,7 +791,8 @@ public:
 		}
 	}
 
-	void slt() {
+	void slt()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
 			int value = allRegisters.getregistervalue(line[2]) < allRegisters.getregistervalue(line[3]) ? 1 : 0;
@@ -667,7 +806,8 @@ public:
 		}
 	}
 
-	void slti() {
+	void slti()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 			int value = allRegisters.getregistervalue(line[2]) < stoi(line[3]) ? 1 : 0;
@@ -681,7 +821,8 @@ public:
 		}
 	}
 
-	void sltiu() {
+	void sltiu()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 			int value = allRegisters.getregistervalue(line[2]) < abs(stoi(line[3])) ? 1 : 0;
@@ -735,7 +876,8 @@ public:
 		}
 	}
 
-	void srai() {
+	void srai()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 			int result = allRegisters.getregistervalue(line[2]) >> stoi(line[3]);
@@ -763,8 +905,23 @@ public:
 			exit(0);
 		}
 	}
+	void srli()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			int result = (unsigned)allRegisters.getregistervalue(line[2]) >> stoi(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
 
-	void sub() {
+	void sub()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
 			int t2 = allRegisters.getregistervalue(line[2]);
@@ -779,7 +936,8 @@ public:
 		}
 	}
 
-	void sw() {
+	void sw()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
 			int address = ((stoi(line[2])) + allRegisters.getregistervalue(line[3]));
@@ -794,23 +952,28 @@ public:
 		}
 	}
 
-	void xorr() {
+	void xorr()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 
 			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
 			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
 			string t3 = "";
-			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
-			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
-			for (int i = 0; i < t1.size(); i++) {
-				if (t1[i] == t2[i]) t3 += "0";
-				else t3 += "1";
+			if (allRegisters.getregistervalue(line[2]) < 0)
+				t1 = twosComp(t1);
+			if (allRegisters.getregistervalue(line[3]) < 0)
+				t2 = twosComp(t2);
+			for (int i = 0; i < t1.size(); i++)
+			{
+				if (t1[i] == t2[i])
+					t3 += "0";
+				else
+					t3 += "1";
 			}
 			int result = toInteger(t3);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
-
 		}
 		else
 		{
@@ -818,18 +981,24 @@ public:
 		}
 	}
 
-	void xori() {
+	void xori()
+	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
 
 			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
 			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
 			string t3 = "";
-			if (allRegisters.getregistervalue(line[2]) < 0) t1 = twosComp(t1);
-			if (allRegisters.getregistervalue(line[3]) < 0) t2 = twosComp(t2);
-			for (int i = 0; i < t1.size(); i++) {
-				if (t1[i] == t2[i]) t3 += "0";
-				else t3 += "1";
+			if (allRegisters.getregistervalue(line[2]) < 0)
+				t1 = twosComp(t1);
+			if (allRegisters.getregistervalue(line[3]) < 0)
+				t2 = twosComp(t2);
+			for (int i = 0; i < t1.size(); i++)
+			{
+				if (t1[i] == t2[i])
+					t3 += "0";
+				else
+					t3 += "1";
 			}
 			int result = toInteger(t3);
 			allRegisters.setregistervalue(line[1], result);

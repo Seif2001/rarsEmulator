@@ -109,7 +109,7 @@ int main()
 {
 	string filename;
 	cout << "Enter the name of the file: ";
-	//cin >> filename;
+	// cin >> filename;
 	filename = "something.txt";
 	vector<string> AssemCodeLines;
 	AssemCodeLines = load_data(filename);
@@ -124,7 +124,7 @@ int main()
 
 	int i = 0;
 	cout << "Enter initial PC counter: ";
-	//cin >> i;
+	// cin >> i;
 	i = 0;
 	i = i / 4;
 	Simulator sim(AssemCodeLines, i);
@@ -152,8 +152,8 @@ int main()
 		}
 	}
 
-	//int pcc = sim.JumptoBranch("insideloop");
+	// int pcc = sim.JumptoBranch("insideloop");
 
-	//cout << pcc;
+	// cout << pcc;
 	return 0;
 }
