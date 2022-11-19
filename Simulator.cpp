@@ -300,6 +300,22 @@ public:
 			exit(0);
 		}
 	}
+
+	void lb() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			int t2 = allRegisters.getregistervalue(line[3]);
+			int t1 = allMemory.getAddressValue(t2);
+			allRegisters.setregistervalue(line[1], pc + 4);
+			int offset = stoi(line[2]);
+			int t1 = allRegisters.getregistervalue(line[3]) + offset;
+			pc = t1;
+		}
+		else
+		{
+			exit(0);
+		}
+	}
 	
 	void bge() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
