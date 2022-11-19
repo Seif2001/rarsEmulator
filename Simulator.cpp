@@ -23,6 +23,7 @@ public:
 	{
 		this->rawCode = rawCode;
 		this->pc = pc;
+		allMemory.setAddressValue(0, -65537);
 	}
 	int getPc() {
 		return pc;
@@ -153,6 +154,30 @@ public:
 		else if (currFunction == "bne" && line.size() == 4) {
 			bne();
 		}
+		else if (currFunction == "blt" && line.size() == 4){
+			blt();
+		}
+		else if (currFunction == "lh" && line.size() == 4) {
+			lh();
+		}
+		else if (currFunction == "sw" && line.size() == 4) {
+			sw();
+		}
+		else if (currFunction == "slti" && line.size() == 4) {
+			slti();
+		}
+		else if (currFunction == "sltiu" && line.size() == 4) {
+			sltiu();
+		}
+		else if (currFunction == "srai" && line.size() == 4) {
+			srai();
+		}
+		else if (currFunction == "slt" && line.size() == 4) {
+			slt();
+		}
+		else if (currFunction == "srl" && line.size() == 4) {
+			srl();
+		}
 		else
 		{
 			cout << "That function doesnt exist, or you wrote it wrong!\n";
@@ -161,6 +186,8 @@ public:
 		allMemory.print();
 	}
 
+
+	
 	void bne() {
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
@@ -169,6 +196,182 @@ public:
 			}
 			pc++;
 
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+
+
+	void blt() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			if (allRegisters.getregistervalue(line[1]) < allRegisters.getregistervalue(line[2])) {
+				JumptoBranch(line[3]);
+			}
+			pc++;
+
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+
+	void lh() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			int result = allMemory.getAddressValue(stoi(line[2]) + allRegisters.getregistervalue(line[3]));
+			bool flag =false;
+			if (result < 0) {
+				flag = true;
+			}
+			result = abs(result);
+			string binRes = toBinary(result);
+			if (binRes.length() <= 16 ) {
+				result = result*pow(-1, flag);
+			}
+			else {
+				binRes = binRes.substr(binRes.length()-16, 16);
+				result = toInteger(binRes) * pow(-1, flag);
+			}
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+	void sb() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			int address = ((stoi(line[2])) + allRegisters.getregistervalue(line[3]));
+			int value = allRegisters.getregistervalue(line[1]);
+			bool flag = false;
+			if (value < 0) {
+				flag = true;
+			}
+			value = abs(value);
+			string binRes = toBinary(value);
+			if (binRes.length() <= 8) {
+				value = value * pow(-1, flag);
+				
+			}
+			else {
+				binRes = binRes.substr(binRes.length()-16, 16);
+				value = toInteger(binRes) * pow(-1, flag);
+			}
+			allMemory.setAddressValue(address, value);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+
+	void sw() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
+		{
+			int address = ((stoi(line[2])) + allRegisters.getregistervalue(line[3]));
+			int value = allRegisters.getregistervalue(line[1]);
+			allMemory.setAddressValue(address, value);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void slti() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			int value = allRegisters.getregistervalue(line[2]) < stoi(line[3]) ? 1 : 0;
+			allRegisters.setregistervalue(line[1], value);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+	void sltiu() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			int value = allRegisters.getregistervalue(line[2]) < abs(stoi(line[3])) ? 1 : 0;
+			allRegisters.setregistervalue(line[1], value);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void srai() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			int result = allRegisters.getregistervalue(line[2]) >> stoi(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+
+	void slt() {
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2])&& allRegisters.checkReg(line[3]))
+		{
+			int value = allRegisters.getregistervalue(line[2]) < allRegisters.getregistervalue(line[3]) ? 1 : 0;
+			allRegisters.setregistervalue(line[1], value);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void sll()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int result = allRegisters.getregistervalue(line[2]) << allRegisters.getregistervalue(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+		}
+		else
+		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
+			exit(0);
+		}
+	}
+
+	void srl()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
+		{
+			int result = allRegisters.getregistervalue(line[2]) >> allRegisters.getregistervalue(line[3]);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
 		}
 		else
 		{
@@ -308,7 +511,7 @@ public:
 			int t1 = allMemory.getAddressValue(t2);
 			allRegisters.setregistervalue(line[1], pc + 4);
 			int offset = stoi(line[2]);
-			int t1 = allRegisters.getregistervalue(line[3]) + offset;
+			//int t1 = allRegisters.getregistervalue(line[3]) + offset;
 			pc = t1;
 		}
 		else
@@ -467,20 +670,7 @@ public:
 		}
 	}
 
-	void sll()
-	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
-		{
-			int result = allRegisters.getregistervalue(line[2]) << allRegisters.getregistervalue(line[3]);
-			allRegisters.setregistervalue(line[1], result);
-			pc++;
-		}
-		else
-		{
-			cout << "This line contains an error please fix it.\nExiting.\n";
-			exit(0);
-		}
-	}
+	
 	void sra()
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
