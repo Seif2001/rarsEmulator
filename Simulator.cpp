@@ -134,7 +134,10 @@ public:
 			pc++;
 			return;
 		}
-
+		else if (currFunction == "add" && line.size() == 4)
+		{
+			add();
+		}
 		else if (currFunction == "addi" && line.size() == 4)
 		{
 			addi();
@@ -219,6 +222,14 @@ public:
 		{
 			orr();
 		}
+		else if (currFunction == "ori" && line.size() == 4)
+		{
+			ori();
+		}
+		else if (currFunction == "sb" && line.size() == 4)
+		{
+			sb();
+		}
 		else if (currFunction == "sh" && line.size() == 4)
 		{
 			sh();
@@ -263,9 +274,21 @@ public:
 		{
 			srli();
 		}
+		else if (currFunction == "sub" && line.size() == 4)
+		{
+			sub();
+		}
 		else if (currFunction == "sw" && line.size() == 4)
 		{
 			sw();
+		}
+		else if (currFunction == "xor" && line.size() == 4)
+		{
+			xorr();
+		}
+		else if (currFunction == "xori" && line.size() == 4)
+		{
+			xori();
 		}
 
 		else
@@ -917,7 +940,17 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-			int result = allRegisters.getregistervalue(line[2]) >> stoi(line[3]);
+			int LHS = allRegisters.getregistervalue(line[2]);
+			int RHS = stoi(line[3]);
+			int result = 0;
+			if (LHS < 0 && RHS > 0)
+			{
+				result = LHS >> RHS | ~(~0U >> RHS);
+			}
+			else
+			{
+				result = LHS >> RHS;
+			}
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
@@ -932,7 +965,7 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
-			int result = allRegisters.getregistervalue(line[2]) >> allRegisters.getregistervalue(line[3]);
+			int result = (unsigned)allRegisters.getregistervalue(line[2]) >> allRegisters.getregistervalue(line[3]);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
