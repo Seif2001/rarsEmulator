@@ -1,13 +1,13 @@
 #pragma once
 #include <iostream>
 #include <map>
-#include<string>
+#include <string>
 
 using namespace std;
 
 struct Comp
 {
-	bool operator()(const string& lhs, const string& rhs) const
+	bool operator()(const string &lhs, const string &rhs) const
 	{
 		string lhsF = lhs;
 		string rhsF = rhs;
@@ -18,8 +18,6 @@ struct Comp
 		return lhsInt < rhsInt;
 	}
 };
-
-
 
 class Register
 {

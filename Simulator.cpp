@@ -151,6 +151,10 @@ public:
 		{
 			auipc();
 		}
+		else if (currFunction == "beq" && line.size() == 4)
+		{
+			beq();
+		}
 		else if (currFunction == "bge" && line.size() == 4)
 		{
 			bge();
@@ -340,8 +344,8 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]))
 		{
-			int result = pc * 4 + (stoi(line[2]) << 12);
-			allRegisters.setregistervalue(line[2], result);
+			int result = pc * 4 + (stoi(line[1]) << 12);
+			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
 		else
@@ -349,7 +353,27 @@ public:
 			exit(0);
 		}
 	}
-
+	void beq()
+	{
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		{
+			int t1 = allRegisters.getregistervalue(line[1]);
+			int t2 = allRegisters.getregistervalue(line[2]);
+			string label = line[3];
+			if (t1 == t2)
+			{
+				JumptoBranch(label);
+			}
+			else
+			{
+				pc++;
+			}
+		}
+		else
+		{
+			exit(0);
+		}
+	}
 	void bge()
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
@@ -376,6 +400,7 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
+			/*
 			string unsignedt1;
 			string unsignedt2;
 			int t1 = allRegisters.getregistervalue(line[1]);
@@ -392,6 +417,16 @@ public:
 			}
 			string label = line[3];
 			if (t1 >= t2)
+			{
+				JumptoBranch(label);
+			}
+			else
+			{
+				pc++;
+			}
+			*/
+			string label = line[3];
+			if ((unsigned)allRegisters.getregistervalue(line[1]) >= (unsigned)allRegisters.getregistervalue(line[2]))
 			{
 				JumptoBranch(label);
 			}
@@ -427,6 +462,7 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
+			/*
 			string unsignedt1;
 			string unsignedt2;
 			int t1 = allRegisters.getregistervalue(line[1]);
@@ -443,6 +479,16 @@ public:
 				t2 = toIntegerunsigned(unsignedt2);
 			}
 			if (t1 < t2)
+			{
+				JumptoBranch(label);
+			}
+			else
+			{
+				pc++;
+			}
+			*/
+			string label = line[3];
+			if ((unsigned)allRegisters.getregistervalue(line[1]) < (unsigned)allRegisters.getregistervalue(line[2]))
 			{
 				JumptoBranch(label);
 			}
@@ -530,23 +576,17 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
-			int offset = stoi(line[2]);
-			int t2 = allRegisters.getregistervalue(line[3]) + offset;
-			string t1 = toBinary(allMemory.getAddressValue(t2));
-			string bword = "";
-			int j = 0;
-			for (int i = 24; i <= 31; i++)
-			{
-				bword += t1[i];
-			}
-			int t = toInteger(bword);
-			t1 = toBinary(t);
-			t = toInteger(t1);
-			allRegisters.setregistervalue(line[1], t);
+			int result = (stoi(line[2]) + allRegisters.getregistervalue(line[3]));
+			string binRes = toBinary(result);
+			binRes = binRes.substr(binRes.size() - 8);
+			string newBin = "000000000000000000000000" + binRes;
+			result = toInteger(newBin);
+			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
 		else
 		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
 			exit(0);
 		}
 	}
@@ -555,7 +595,7 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
-			int result = allMemory.getAddressValue(stoi(line[2]) + allRegisters.getregistervalue(line[3]));
+			int result = (stoi(line[2]) + allRegisters.getregistervalue(line[3]));
 			bool flag = false;
 			if (result < 0)
 			{
@@ -585,23 +625,11 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
-			int result = allMemory.getAddressValue(stoi(line[2]) + allRegisters.getregistervalue(line[3]));
-			bool flag = false;
-			if (result < 0)
-			{
-				flag = true;
-			}
-			result = abs(result);
+			int result = (stoi(line[2]) + allRegisters.getregistervalue(line[3]));
 			string binRes = toBinary(result);
-			if (binRes.length() <= 16)
-			{
-				result = result * pow(-1, flag);
-			}
-			else
-			{
-				binRes = binRes.substr(binRes.length() - 16, 16);
-				result = (unsigned)(toInteger(binRes) * pow(-1, flag));
-			}
+			binRes = binRes.substr(binRes.size() - 16);
+			string newBin = "0000000000000000" + binRes;
+			result = toInteger(newBin);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
@@ -615,10 +643,12 @@ public:
 	{ // not wokring
 		if (allRegisters.checkReg(line[1]))
 		{
-			
-			//int result = (stoi(line[2]) << 12);
-			//allregisters.setregistervalue(line[2], result);
-			//pc++;
+
+			int result = (stoi(line[2]) << 12);
+			allRegisters.setregistervalue(line[1], result);
+			pc++;
+			/*
+
 			string result;
 			cout << line[2];
 			string t2 = toBinary(stoi(line[2]));
@@ -635,6 +665,7 @@ public:
 			int res = toInteger(result);
 			allRegisters.setregistervalue(line[1], res);
 			pc++;
+			*/
 		}
 		else
 		{
@@ -646,7 +677,7 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[3]))
 		{
-			int result = allMemory.getAddressValue(stoi(line[2]) + allRegisters.getregistervalue(line[3]));
+			int result = stoi(line[2]) + allRegisters.getregistervalue(line[3]);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
@@ -830,7 +861,7 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-			int value = allRegisters.getregistervalue(line[2]) < abs(stoi(line[3])) ? 1 : 0;
+			int value = (unsigned)allRegisters.getregistervalue(line[2]) < (unsigned)stoi(line[3]) ? 1 : 0;
 			allRegisters.setregistervalue(line[1], value);
 			pc++;
 		}

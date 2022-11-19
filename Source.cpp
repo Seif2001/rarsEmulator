@@ -128,7 +128,6 @@ int main()
 	i = 0;
 	i = i / 4;
 	Simulator sim(AssemCodeLines, i);
-	cout << AssemCodeLines.size();
 	/*pc counter is given in multiples of 4 and
 	is incrimented by 4 each time so we just divide by 4 and now in the loop we can incriment by 1
 	but we need to multiply by 4 if we need to store pc address for example*/
