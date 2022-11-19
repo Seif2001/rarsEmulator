@@ -615,7 +615,12 @@ public:
 	{ // not wokring
 		if (allRegisters.checkReg(line[1]))
 		{
+			
+			//int result = (stoi(line[2]) << 12);
+			//allregisters.setregistervalue(line[2], result);
+			//pc++;
 			string result;
+			cout << line[2];
 			string t2 = toBinary(stoi(line[2]));
 			if (allRegisters.getregistervalue(line[2]) < 0)
 				t2 = twosComp(t2);
