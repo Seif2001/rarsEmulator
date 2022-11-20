@@ -2,8 +2,8 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include<sstream>
-#include<iomanip>
+#include <sstream>
+#include <iomanip>
 using namespace std;
 
 struct Comp
@@ -227,13 +227,15 @@ public:
 		reg[name] = x;
 	}
 
-	string dectohex(int dec) {
+	string dectohex(int dec)
+	{
 		stringstream ss;
 		ss << hex << dec;
 		string res(ss.str());
 		return res;
 	}
-	string dectooct(int dec) {
+	string dectooct(int dec)
+	{
 		stringstream ss;
 		ss << oct << dec;
 		string res(ss.str());
@@ -257,7 +259,7 @@ public:
 		cout << "\nRegisters: \n";
 		for (auto it = reg.cbegin(); it != reg.cend(); ++it)
 		{
-			cout << setw(10) << left << "Register: " << setw(3) << left << it->first << setw(8) << left << " Value: "<<setw(9) << left <<it->second << setw(15) <<  " HexaDecimal Value: " << setw(10) << dectohex(it->second) << setw(15) << "Octal Value: " << setw(10) << dectooct(it->second) << setw(15) << "Binary Value: " << setw(35) << toBinary(it->second) << "\n";
+			cout << setw(10) << left << "Register: " << setw(3) << left << it->first << setw(8) << left << " Value: " << setw(9) << left << it->second << setw(15) << " HexaDecimal Value: " << setw(10) << dectohex(it->second) << setw(0) << "Octal Value: " << setw(15) << dectooct(it->second) << setw(15) << "Binary Value: " << setw(35) << toBinary(it->second) << "\n";
 		}
 		cout << endl;
 	}

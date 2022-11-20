@@ -10,9 +10,6 @@
 
 using namespace std;
 
-
-
-
 vector<string> load_data(string filePath)
 {
 	ifstream file;
@@ -25,7 +22,6 @@ vector<string> load_data(string filePath)
 		{
 			getline(file, s, '\n');
 			vecOfCode.push_back(s);
-
 		}
 	}
 	else
@@ -35,6 +31,7 @@ vector<string> load_data(string filePath)
 		exit(0);
 	}
 	vecOfCode.pop_back();
+	vecOfCode.push_back("ebreak");
 
 	return vecOfCode;
 }
@@ -112,11 +109,11 @@ string validate(string &line)
 int main()
 {
 	string filename;
-	cout << "Enter the name of the file: ";
-	// cin >> filename;
-	filename = "something.txt";
+	cout << "Enter the name of the Assembly code file: ";
+	cin >> filename;
 	vector<string> AssemCodeLines;
 	AssemCodeLines = load_data(filename);
+
 	for (int i = 0; i < AssemCodeLines.size(); i++)
 	{
 		string label = validate(AssemCodeLines[i]);
@@ -128,8 +125,7 @@ int main()
 
 	int i = 0;
 	cout << "Enter initial PC counter: ";
-	// cin >> i;
-	i = 0;
+	cin >> i;
 	i = i / 4;
 	Simulator sim(AssemCodeLines, i);
 	/*pc counter is given in multiples of 4 and
@@ -151,7 +147,8 @@ int main()
 		}
 		catch (exception e)
 		{
-			cout << AssemCodeLines[sim.getPc()] << " Is not valid syntax. Ignoring that line." << endl;
+			cout << AssemCodeLines[sim.getPc()] << " Is not valid syntax. Closing Program." << endl;
+			exit(0);
 		}
 	}
 

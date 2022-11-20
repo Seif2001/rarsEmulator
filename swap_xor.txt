@@ -1,0 +1,5 @@
+addi t1,x0,3
+addi t2,x0,2
+xor t1,t1,t2
+xor t2,t1,t2
+xor t1,t1,t2 

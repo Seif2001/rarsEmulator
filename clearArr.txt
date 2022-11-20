@@ -1,0 +1,11 @@
+jal ra, Clear
+jal ra, Exit2
+Clear: bge x0, a1,Exit
+addi t0,x0,0
+Loop: slli t1, t0, 2
+addi t1,t1,a0
+sw x0, 0(t1)
+Addi t0,t0,1
+blt a0,t0,Loop
+Exit: jalr x0, 0(ra)
+Exit2:ebreak

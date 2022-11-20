@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <iomanip>
 #include "Memory.cpp"
 #include "Register.cpp"
 using namespace std;
@@ -10,13 +11,13 @@ class Simulator
 {
 private:
 	Register allRegisters;
-	Memory allMemory;
 	vector<string> rawCode;
 	vector<string> line;
 	int const initialpc;
 	int pc;
 
 public:
+	Memory allMemory;
 	Simulator(vector<string> rawCode, int pc) : initialpc(pc)
 	{
 		this->rawCode = rawCode;
@@ -27,7 +28,7 @@ public:
 	{
 		return pc;
 	}
-	
+
 	string twosComp(string x)
 	{
 		int i, carr = 1;
@@ -106,7 +107,20 @@ public:
 		}
 		return bNum;
 	}
-
+	string dectohex(int dec)
+	{
+		stringstream ss;
+		ss << hex << dec;
+		string res(ss.str());
+		return res;
+	}
+	string dectooct(int dec)
+	{
+		stringstream ss;
+		ss << oct << dec;
+		string res(ss.str());
+		return res;
+	}
 	void JumptoBranch(string label)
 	{
 		label = label + ":";
@@ -296,7 +310,7 @@ public:
 			exit(0);
 		}
 		allRegisters.setregistervalue("x0", 0);
-		cout << "\nCurrent PC: " << (pc * 4) - 4 << endl;
+		cout << setw(10) << left << "\nCurrent PC: " << setw(8) << left << (pc * 4) - 4 << setw(15) << " HexaDecimal Value: " << setw(10) << dectohex((pc * 4) - 4) << setw(0) << "Octal Value: " << setw(15) << dectooct((pc * 4) - 4) << setw(15) << "Binary Value: " << setw(35) << toBinary((pc * 4) - 4) << "\n";
 		allRegisters.print();
 		allMemory.print();
 	}
@@ -716,27 +730,13 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-
-			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
-			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
-			string t3 = "";
-			if (allRegisters.getregistervalue(line[2]) < 0)
-				t1 = twosComp(t1);
-			if (allRegisters.getregistervalue(line[3]) < 0)
-				t2 = twosComp(t2);
-			for (int i = 0; i < t1.size(); i++)
-			{
-				if (t1[i] == '1' || t2[i] == '1')
-					t3 += "1";
-				else
-					t3 += "0";
-			}
-			int result = toInteger(t3);
+			int result = allRegisters.getregistervalue(line[2]) | stoi(line[3]);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
 		else
 		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
 			exit(0);
 		}
 	}
@@ -841,7 +841,6 @@ public:
 		{
 			int result = allRegisters.getregistervalue(line[2]) << stoi(line[3]);
 			allRegisters.setregistervalue(line[1], result);
-			cout << line[1] << " " << result;
 			pc++;
 		}
 		else
@@ -1024,29 +1023,15 @@ public:
 
 	void xorr()
 	{
-		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
+		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
-
-			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
-			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
-			string t3 = "";
-			if (allRegisters.getregistervalue(line[2]) < 0)
-				t1 = twosComp(t1);
-			if (allRegisters.getregistervalue(line[3]) < 0)
-				t2 = twosComp(t2);
-			for (int i = 0; i < t1.size(); i++)
-			{
-				if (t1[i] == t2[i])
-					t3 += "0";
-				else
-					t3 += "1";
-			}
-			int result = toInteger(t3);
+			int result = allRegisters.getregistervalue(line[2]) ^ allRegisters.getregistervalue(line[3]);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
 		else
 		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
 			exit(0);
 		}
 	}
@@ -1055,27 +1040,13 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-
-			string t1 = toBinary(allRegisters.getregistervalue(line[2]));
-			string t2 = toBinary(allRegisters.getregistervalue(line[3]));
-			string t3 = "";
-			if (allRegisters.getregistervalue(line[2]) < 0)
-				t1 = twosComp(t1);
-			if (allRegisters.getregistervalue(line[3]) < 0)
-				t2 = twosComp(t2);
-			for (int i = 0; i < t1.size(); i++)
-			{
-				if (t1[i] == t2[i])
-					t3 += "0";
-				else
-					t3 += "1";
-			}
-			int result = toInteger(t3);
+			int result = allRegisters.getregistervalue(line[2]) ^ stoi(line[3]);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
 		else
 		{
+			cout << "This line contains an error please fix it.\nExiting.\n";
 			exit(0);
 		}
 	}
