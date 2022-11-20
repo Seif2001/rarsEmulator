@@ -1,23 +1,14 @@
 #include <iostream>
 using namespace std;
 
-int sum(int n)
+int main(int n)
 {
-    if (n == 0 || n == 1)
-    {
-        return n;
-    }
-    else
-    {
-        return n + (sum(n - 1));
-    }
+	int g = 3;
+	int h = 4;
+	int i = 1;
+	int j = 2;
+
+	int f = (g + h) - (i + j);
+
 }
-int main()
-{
-    int s = 2, t = 3, temp = 0;
-    temp = s;
-    s = t;
-    t = temp;
-    cout << sum(5);
-    return 0;
-}
+

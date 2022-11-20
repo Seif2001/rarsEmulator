@@ -2,6 +2,8 @@
 #include <iostream>
 #include <map>
 #include <fstream>
+#include<iomanip>
+#include <sstream>
 #include <string>
 
 using namespace std;

@@ -1,0 +1,7 @@
+addi a0,x0,3
+addi a1,x0,2
+jal ra, power
+jal ra, exit
+power: sll a0,a0,a1
+jalr x0, 0(ra)
+exit:

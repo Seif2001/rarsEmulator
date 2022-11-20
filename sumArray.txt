@@ -1,12 +1,14 @@
 addi a0, x0, 1000
 addi a1, x0,3
+addi x12, x0, 0
 jal ra, Clear
 jal ra, Exit2
-Clear: bge x0, a1,Exit
+sum: bge x0, a1,Exit
 addi x21,x0,0
 Loop: slli x22, x21, 2
 add x22,x22,a0
-sw x0, 0(x22)
+lw x9, 0(x22)
+add x12, x12, x9
 addi x21,x21,1
 blt x21,a1,Loop
 Exit: jalr x0, 0(ra)
