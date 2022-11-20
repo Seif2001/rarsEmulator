@@ -4,7 +4,6 @@
 #include <math.h>
 #include "Memory.cpp"
 #include "Register.cpp"
-
 using namespace std;
 
 class Simulator
@@ -22,13 +21,13 @@ public:
 	{
 		this->rawCode = rawCode;
 		this->pc = pc;
-		allMemory.setAddressValue(0, -65537);
-		allMemory.setAddressValue(1, 537);
+		allMemory.load_memValues("memoryInit.txt");
 	}
 	int getPc()
 	{
 		return pc;
 	}
+	
 	string twosComp(string x)
 	{
 		int i, carr = 1;
@@ -966,7 +965,7 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]) && allRegisters.checkReg(line[3]))
 		{
-			int result = (unsigned)allRegisters.getregistervalue(line[2]) >> allRegisters.getregistervalue(line[3]);
+			int result = allRegisters.getregistervalue(line[2]) >> allRegisters.getregistervalue(line[3]);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}
@@ -980,7 +979,7 @@ public:
 	{
 		if (allRegisters.checkReg(line[1]) && allRegisters.checkReg(line[2]))
 		{
-			int result = (unsigned)allRegisters.getregistervalue(line[2]) >> stoi(line[3]);
+			int result = allRegisters.getregistervalue(line[2]) >> stoi(line[3]);
 			allRegisters.setregistervalue(line[1], result);
 			pc++;
 		}

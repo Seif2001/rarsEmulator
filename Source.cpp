@@ -10,6 +10,9 @@
 
 using namespace std;
 
+
+
+
 vector<string> load_data(string filePath)
 {
 	ifstream file;
@@ -22,6 +25,7 @@ vector<string> load_data(string filePath)
 		{
 			getline(file, s, '\n');
 			vecOfCode.push_back(s);
+
 		}
 	}
 	else

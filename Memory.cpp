@@ -1,6 +1,10 @@
 #pragma once
 #include <iostream>
 #include <map>
+#include <fstream>
+#include <string>
+
+
 
 using namespace std;
 
@@ -31,7 +35,24 @@ public:
 		}
 		cout << endl;
 	}
+	void load_memValues(string filePath) {
 
+		ifstream file;
+		file.open(filePath);
+		string s = "";
+		while (file) {
+			getline(file, s, '\n');
+			try {
+				
+				int address = stoi(s.substr(0, s.find(',')));
+				int value = stoi(s.substr(s.find(',') + 1));
+				addressMap[address] = value;
+			}
+			catch(exception e){
+				cout << "Format Error in the following line: " << s << endl;
+			}
+		}
+	}
 	~Memory()
 	{
 	}

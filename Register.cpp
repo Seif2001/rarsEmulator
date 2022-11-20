@@ -2,7 +2,8 @@
 #include <iostream>
 #include <map>
 #include <string>
-
+#include<sstream>
+#include<iomanip>
 using namespace std;
 
 struct Comp
@@ -225,12 +226,26 @@ public:
 		// we have to put the if "it is found" here
 		reg[name] = x;
 	}
+
+	string dectohex(int dec) {
+		stringstream ss;
+		ss << hex << dec;
+		string res(ss.str());
+		return res;
+	}
+	string dectooct(int dec) {
+		stringstream ss;
+		ss << oct << dec;
+		string res(ss.str());
+		return res;
+	}
+
 	void print()
 	{
 		cout << "\nRegisters: \n";
 		for (auto it = reg.cbegin(); it != reg.cend(); ++it)
 		{
-			cout << "Register: " << it->first << " Value: " << it->second << "\n";
+			cout << setw(10) << left << "Register: " << setw(3) << left << it->first << setw(8) << left << " Value: "<<setw(16) << left <<it->second << setw(15) <<  " HexaDecimal Value: " << setw(15) << dectohex(it->second) << setw(15) << "Octal Value: " << setw(15) << dectooct(it->second) << "\n";
 		}
 		cout << endl;
 	}
